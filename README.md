@@ -13,6 +13,8 @@ A Node.js/Express API for managing users and tickets with JWT authentication.
 - ✅ SQLite database
 - ✅ Protected routes (GET, POST, PUT, DELETE require authentication)
 - ✅ Logging for all requests including user.email (when applicable)
+- ✅ API documentation (Swagger)
+- ✅ Role-based access control (RBAC)
 
 
 ## Prerequisites
@@ -59,28 +61,11 @@ npm run dev
 npm start
 ```
 
-The server will start at `http://localhost:port`
+The server will start at `http://localhost:3000`
 
 ## API Routes
 
-### Authentication
-- `POST /api/login` - Login and get JWT token
-
-### Users (Public GET, Protected POST/PUT/DELETE)
-- `POST /api/users` - Create a new user (register)
-- `GET /api/users` - Get all users
-- `GET /api/users/:id` - Get user by ID
-- `PUT /api/users/:id` - Update user (requires auth)
-- `DELETE /api/users/:id` - Delete user (requires auth)
-
-### Tickets (Public GET, Protected POST/PUT/DELETE)
-- `POST /api/tickets` - Create a ticket (requires auth)
-- `GET /api/tickets` - Get all tickets
-- `GET /api/tickets/:id` - Get ticket by ID
-- `PUT /api/tickets/:id` - Update ticket (requires auth)
-- `DELETE /api/tickets/:id` - Delete ticket (requires auth)
-
-## Authentication
+### Visit SwaggerUI http://localhost:3000/api-docs/
 
 To access protected endpoints, include the JWT token in the Authorization header:
 
@@ -107,18 +92,12 @@ Response:
   }
 }
 ```
-
-### Example: Create Ticket (with auth)
-```bash
-curl -X POST http://localhost:3000/api/tickets \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
-  -d '{
-    "title": "Bug Fix",
-    "description": "Fix login bug",
-    "priority": "high"
-  }'
+## to create user with admin role use 
 ```
+header admin: 'admin'
+```
+
+## User EndPoints except Login protected with admin role
 
 ## Database
 
@@ -160,6 +139,7 @@ curl -X POST http://localhost:3000/api/tickets \
 - **bcryptjs** - Password hashing
 - **Joi** - Input validation
 - **dotenv** - Environment configuration
+- **SWAGGERUI** - API Docs
 
 ## Security Notes
 
@@ -173,10 +153,8 @@ curl -X POST http://localhost:3000/api/tickets \
 
 - Add email verification
 - Add password reset functionality
-- Add role-based access control (RBAC)
+- Add r
 - Add rate limiting
-
-- Add API documentation (Swagger)
 
 ## License
 
