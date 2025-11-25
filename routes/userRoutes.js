@@ -3,11 +3,14 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const validateUser = require('../middleware/validationMiddleware');
 const authMiddleware = require('../middleware/authMiddleware');
+const loggerMiddleware = require('../middleware/loggerMiddleware');
+
+router.use(loggerMiddleware);
 
 router.post('/login', userController.loginUser);
 router.post('/users', validateUser, userController.createUser);
-router.get('/users', userController.getAllUsers);
-router.get('/users/:id', userController.getUserById);
+router.get('/users', authMiddleware, userController.getAllUsers);
+router.get('/users/:id', authMiddleware, userController.getUserById);
 router.put('/users/:id', authMiddleware, validateUser, userController.updateUser);
 router.delete('/users/:id', authMiddleware, userController.deleteUser);
 

@@ -11,7 +11,9 @@ A Node.js/Express API for managing users and tickets with JWT authentication.
 - ✅ Track ticket creator and last updater
 - ✅ Input validation with Joi
 - ✅ SQLite database
-- ✅ Protected routes (POST, PUT, DELETE require authentication)
+- ✅ Protected routes (GET, POST, PUT, DELETE require authentication)
+- ✅ Logging for all requests including user.email (when applicable)
+
 
 ## Prerequisites
 
@@ -173,7 +175,7 @@ curl -X POST http://localhost:3000/api/tickets \
 - Add password reset functionality
 - Add role-based access control (RBAC)
 - Add rate limiting
-- Add request logging
+
 - Add API documentation (Swagger)
 
 ## License
