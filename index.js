@@ -3,10 +3,10 @@ const dotenv = require('dotenv');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const sequelize = require('./config/database');
-const userRoutes = require('./routes/userRoutes');
-const ticketRoutes = require('./routes/ticketRoutes');
+const userRoutes = require('./routes/userRoutes').default;
+const ticketRoutes = require('./routes/ticketRoutes').default;
 const loggerMiddleware = require('./middleware/loggerMiddleware');
-const createDefaultAdmin = require("./utils/createDefaultAdmin");
+const createDefaultAdmin = require("./utils/createDefaultAdmin").default;
 
 
 // Load environment variables from .env file

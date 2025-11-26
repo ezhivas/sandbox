@@ -1,10 +1,10 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config();
 
-const User = require('../models/user');
-const bcrypt = require('bcryptjs');
+const User = require("../models/user").default;
+import bcrypt from 'bcryptjs';
 
-const createDefaultAdmin = async () => {
+const createDefaultAdmin = async (): Promise<void> => {
     try {
         const adminEmail = process.env.EMAIL;
         const adminPassword = process.env.PASSWORD;
@@ -31,14 +31,9 @@ const createDefaultAdmin = async () => {
         });
 
         console.log('Default admin created successfully!');
-    } catch (error) {
+    } catch (error: any) { // В JS error неизвестного типа, в TS мы явно говорим "any" (любой), чтобы получить доступ к .message
         console.error('Failed to create default admin:', error.message);
     }
 };
 
-module.exports = createDefaultAdmin;
-
-
-
-
-
+export default createDefaultAdmin;

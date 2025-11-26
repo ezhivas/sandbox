@@ -1,0 +1,21 @@
+import express from 'express';
+
+import {createTicket, getTicketById, getAllTickets, getTicketByStatus, deleteTicket, getTicketByPriority, updateTicket} from '../controllers/ticketController';
+
+import validateTicket from '../middleware/ticketValidationMiddleware';
+import authMiddleware from '../middleware/authMiddleware';
+
+const roleMiddleware = require('../middleware/roleMiddleware');
+
+const router = express.Router();
+
+router.use(authMiddleware);
+
+router.get('/tickets', getAllTickets);
+router.get('/tickets/:id', getTicketById);
+
+router.post('/tickets', validateTicket, createTicket);
+router.put('/tickets/:id', validateTicket, updateTicket);
+router.delete('/tickets/:id', roleMiddleware('admin'), deleteTicket);
+
+export default router;

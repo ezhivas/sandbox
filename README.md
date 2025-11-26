@@ -116,7 +116,7 @@ header admin: 'admin'
 │   ├── validationMiddleware.js  # User validation
 │   └── ticketValidationMiddleware.js  # Ticket validation
 ├── models/
-│   ├── user.js              # User model
+│   ├── user.ts              # User model
 │   └── ticket.js            # Ticket model
 ├── routes/
 │   ├── userRoutes.js        # User routes
