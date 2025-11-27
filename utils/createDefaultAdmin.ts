@@ -1,18 +1,15 @@
-import dotenv from 'dotenv';
-dotenv.config();
+// import dotenv from 'dotenv';
+// dotenv.config();
+
+import { config } from '../config/env';
 
 const User = require("../models/user").default;
 import bcrypt from 'bcryptjs';
 
 const createDefaultAdmin = async (): Promise<void> => {
     try {
-        const adminEmail = process.env.EMAIL;
-        const adminPassword = process.env.PASSWORD;
-
-        if (!adminEmail || !adminPassword) {
-            console.warn('Admin credentials not found in .env, skipping admin creation.');
-            return;
-        }
+        const adminEmail = config.admin.email;
+        const adminPassword = config.admin.password;
 
         const existingAdmin = await User.findOne({ where: { email: adminEmail } });
 
@@ -31,8 +28,11 @@ const createDefaultAdmin = async (): Promise<void> => {
         });
 
         console.log('Default admin created successfully!');
-    } catch (error: any) { // В JS error неизвестного типа, в TS мы явно говорим "any" (любой), чтобы получить доступ к .message
-        console.error('Failed to create default admin:', error.message);
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error('Failed to create default admin:', error.message);
+        }
+        console.error(error);
     }
 };
 

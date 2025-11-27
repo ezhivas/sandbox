@@ -1,11 +1,10 @@
 import jwt from 'jsonwebtoken';
+import { config } from '../config/env';
 import {Request, Response, NextFunction} from 'express';
 import {UserPayload} from "../types";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET not found in the .env file');
-}
+
+const JWT_SECRET = config.jwtSecret;
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
