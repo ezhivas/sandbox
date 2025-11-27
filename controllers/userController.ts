@@ -18,6 +18,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
             password: hashedPassword,
             role: 'user',
         });
+
         res.status(201).json(newUser);
     } catch (error) {
         next(error);
@@ -40,7 +41,7 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
 
         if (!user) {
             res.status(404).json({error: 'User not found'});
-            return; // Тут у тебя было правильно!
+            return;
         }
         res.status(200).json(user);
     } catch (error) {
@@ -56,7 +57,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
         if (!user) {
             res.status(404).json({error: 'User not found'});
-            return; // FIX: Обязательно выходим, иначе код ниже упадет!
+            return;
         }
 
         user!.username = username || user!.username;
@@ -67,6 +68,11 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         }
 
         await user!.save();
+
+        await user!.reload({
+            attributes: { exclude: ['password'] }
+        });
+
         res.status(200).json(user);
     } catch (error) {
         next(error);
