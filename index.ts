@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import { config } from './config/env';
+
 
 import express, { Request, Response, NextFunction } from 'express';
 import swaggerUi from 'swagger-ui-express';
@@ -13,7 +13,7 @@ import createDefaultAdmin from "./utils/createDefaultAdmin";
 import swaggerSpec from './config/swagger';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = config.port;
 
 app.use(express.json());
 
@@ -54,4 +54,4 @@ sequelize.sync({ alter: true })
         process.exit(1);
     });
 
-export default app;
+//export default app;
