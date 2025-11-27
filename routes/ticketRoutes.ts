@@ -1,6 +1,6 @@
 import express from 'express';
 
-import {createTicket, getTicketById, getAllTickets, getTicketByStatus, deleteTicket, getTicketByPriority, updateTicket} from '../controllers/ticketController';
+import {createTicket, getTicketById, getAllTickets, getTicketByStatus, deleteTicket, getTicketByPriority, updateTicket, getTicketByText} from '../controllers/ticketController';
 
 import validateTicket from '../middleware/ticketValidationMiddleware';
 import authMiddleware from '../middleware/authMiddleware';
@@ -19,5 +19,7 @@ router.delete('/tickets/:id', roleMiddleware(), deleteTicket);
 
 router.get('/tickets/priority/:priority', roleMiddleware(), getTicketByPriority);
 router.get('/tickets/status/:status', roleMiddleware(), getTicketByStatus);
+
+router.post('/tickets/find', roleMiddleware(), getTicketByText);
 
 export default router;

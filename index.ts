@@ -10,7 +10,7 @@ import ticketRoutes from './routes/ticketRoutes';
 import loggerMiddleware from './middleware/loggerMiddleware';
 import createDefaultAdmin from "./utils/createDefaultAdmin";
 
-const swaggerSpec = require('./config/swagger');
+import swaggerSpec from './config/swagger';
 
 const app = express();
 const port = process.env.PORT || 3000;

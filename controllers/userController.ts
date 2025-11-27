@@ -1,14 +1,14 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user';
 
 
-const JWT_SECRET = (process.env.JWT_SECRET ) as string;
+const JWT_SECRET = (process.env.JWT_SECRET) as string;
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { username, email, password } = req.body;
+        const {username, email, password} = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({
@@ -19,7 +19,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
         });
         res.status(201).json(newUser);
     } catch (error: any) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({error: error.message});
     }
 };
 
@@ -28,33 +28,33 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
         const users = await User.findAll();
         res.status(200).json(users);
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({error: error.message});
     }
 };
 
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
         const user = await User.findByPk(id);
 
         if (!user) {
-            res.status(404).json({ error: 'User not found' });
+            res.status(404).json({error: 'User not found'});
             return; // Тут у тебя было правильно!
         }
         res.status(200).json(user);
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({error: error.message});
     }
 };
 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { id } = req.params;
-        const { username, email, password } = req.body;
+        const {id} = req.params;
+        const {username, email, password} = req.body;
         const user = await User.findByPk(id);
 
         if (!user) {
-            res.status(404).json({ error: 'User not found' });
+            res.status(404).json({error: 'User not found'});
             return; // FIX: Обязательно выходим, иначе код ниже упадет!
         }
 
@@ -68,68 +68,68 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
         await user!.save();
         res.status(200).json(user);
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({error: error.message});
     }
 };
 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
         const user = await User.findByPk(id);
 
         if (!user) {
-            res.status(404).json({ error: 'User not found' });
+            res.status(404).json({error: 'User not found'});
             return; // FIX: Добавлен return
         }
 
         await user!.destroy();
-        res.status(200).json({ message: 'User deleted successfully' });
+        res.status(200).json({message: 'User deleted successfully'});
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({error: error.message});
     }
 };
 
 export const deleteAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
         // FIX: Используем User (класс), а не user (переменную, которой нет)
-        await User.destroy({ where: {} });
-        res.status(200).json({ message: 'All users deleted successfully' });
+        await User.destroy({where: {}});
+        res.status(200).json({message: 'All users deleted successfully'});
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({error: error.message});
     }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email, password } = req.body;
+        const {email, password} = req.body;
 
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({where: {email}});
 
         if (!user) {
-            res.status(404).json({ error: 'No user with this email' });
+            res.status(404).json({error: 'No user with this email'});
             return; // FIX: Добавлен return
         }
 
         const isPasswordValid = await bcrypt.compare(password, user!.password);
 
         if (!isPasswordValid) {
-            res.status(401).json({ error: 'Invalid password' });
+            res.status(401).json({error: 'Invalid password'});
             return; // FIX: Добавлен return
         }
 
         const token = jwt.sign(
-            { id: user!.id, email: user!.email, username: user!.username, role: user!.role },
+            {id: user!.id, email: user!.email, username: user!.username, role: user!.role},
             JWT_SECRET,
-            { expiresIn: '24h' }
+            {expiresIn: '24h'}
         );
 
         res.status(200).json({
             message: 'Login successful',
             token,
-            user: { id: user!.id, email: user!.email, role: user!.role }
+            user: {id: user!.id, email: user!.email, role: user!.role}
         });
 
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({error: error.message});
     }
 };
