@@ -22,6 +22,12 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 
     public readonly createdAt!:Date;
     public readonly updatedAt!:Date;
+
+    toJSON() {
+        const values = { ...this.get() };
+        delete values.password;
+        return values;
+    }
 }
 
 User.init(

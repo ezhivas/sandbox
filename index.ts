@@ -58,4 +58,4 @@ sequelize.sync({ alter: true })
         process.exit(1);
     });
 
-//export default app;
+export default app;
