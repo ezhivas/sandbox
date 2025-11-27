@@ -1,5 +1,5 @@
 import express from 'express';
-// Импортируем функции из контроллера (обрати внимание на login)
+
 import {
     login,
     createUser,
@@ -9,9 +9,11 @@ import {
     deleteUser
 } from '../controllers/userController';
 
-const validateUser = require('../middleware/validationMiddleware');
-const authMiddleware = require('../middleware/authMiddleware');
-const roleMiddleware = require('../middleware/roleMiddleware');
+
+
+import validateUser from '../middleware/validationMiddleware';
+import authMiddleware from '../middleware/authMiddleware';
+import roleMiddleware from '../middleware/roleMiddleware';
 
 const router = express.Router();
 

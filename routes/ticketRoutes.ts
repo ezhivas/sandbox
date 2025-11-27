@@ -4,8 +4,7 @@ import {createTicket, getTicketById, getAllTickets, getTicketByStatus, deleteTic
 
 import validateTicket from '../middleware/ticketValidationMiddleware';
 import authMiddleware from '../middleware/authMiddleware';
-
-const roleMiddleware = require('../middleware/roleMiddleware');
+import roleMiddleware  from '../middleware/roleMiddleware';
 
 const router = express.Router();
 
