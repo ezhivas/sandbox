@@ -2,9 +2,10 @@ import {Request, Response} from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user';
+import {config} from "../config/env";
 
 
-const JWT_SECRET = (process.env.JWT_SECRET) as string;
+const JWT_SECRET = config.jwtSecret;
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
     try {

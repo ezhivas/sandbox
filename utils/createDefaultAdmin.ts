@@ -1,9 +1,6 @@
-// import dotenv from 'dotenv';
-// dotenv.config();
-
 import { config } from '../config/env';
 
-const User = require("../models/user").default;
+import User from "../models/user";
 import bcrypt from 'bcryptjs';
 
 const createDefaultAdmin = async (): Promise<void> => {
