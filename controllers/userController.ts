@@ -4,13 +4,17 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user';
 import {config} from "../config/env";
 import {sendVerificationEmail} from "../utils/emailService";
+import sequelize from "../config/database";
 
 
 const JWT_SECRET = config.jwtSecret;
 
 export const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+    const t = await sequelize.transaction();
+
     try {
-        const {username, email, password} = req.body;
+        const { username, email, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({
@@ -18,35 +22,38 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
             email,
             password: hashedPassword,
             role: 'user',
-            isVerified: false,
-        });
+        }, { transaction: t });
 
-
-        let verificationToken = jwt.sign(
-            {
-                id: newUser.id,
-                email: email,
-                username: username
-            },
+        const verificationToken = jwt.sign(
+            { id: newUser.id },
             JWT_SECRET,
-            {expiresIn: '1h'}
+            { expiresIn: '1h' }
         );
 
-        const result = await sendVerificationEmail(newUser.email, verificationToken);
+        const isEmailSent = await sendVerificationEmail(newUser.email, verificationToken);
 
-        if (result) {
-            res.status(201).json({
-                message: 'User created, please verify your email',
-                user: {
-                    id: newUser.id,
-                    username: newUser.username,
-                    email: newUser.email
-                }
+        if (!isEmailSent) {
+            await t.rollback();
+
+            res.status(500).json({
+                error: 'Failed to send verification email. User registration cancelled. Please try again later.'
             });
+            return;
         }
-            else {
-            res.status(201).json({message: 'User created, but we could not send the verification email.'})}
-        } catch (error) {
+
+        await t.commit();
+
+        res.status(201).json({
+            message: 'User created. Please verify your email inbox',
+            user: {
+                id: newUser.id,
+                username: newUser.username,
+                email: newUser.email
+            }
+        });
+
+    } catch (error) {
+        await t.rollback();
         next(error);
     }
 };
@@ -55,7 +62,6 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
     try {
         const { token } = req.query;
 
-        // 1. Перевіряємо, чи переданий токен
         if (!token) {
             res.status(400).json({ error: 'Token is missing' });
             return;
