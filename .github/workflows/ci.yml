@@ -1,0 +1,40 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main", "master" ] # Запускати при пуші в main або master
+  pull_request:
+    branches: [ "main", "master" ] # Та при створенні PR
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm' # Автоматичне кешування npm пакетів для прискорення
+
+      - name: Install dependencies
+        run: npm ci # Використовує package-lock.json для чистого встановлення
+
+      # Опціонально: створіть .env файл для тестів, якщо він потрібен
+      # У вашому package.json тести запускаються через jest, який може потребувати змінних
+      - name: Create .env file
+        run: |
+          cp .env.example .env
+          # Якщо потрібно, тут можна перезаписати змінні для CI середовища, наприклад:
+          # echo "NODE_ENV=test" >> .env
+
+      - name: Run tests
+        run: npm test
