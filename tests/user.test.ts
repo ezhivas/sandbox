@@ -5,6 +5,11 @@ import User from '../models/user';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/env';
 
+
+jest.mock('../utils/emailService', () => ({
+    sendVerificationEmail: jest.fn().mockResolvedValue(true)
+}));
+
 // DB init
 beforeAll(async () => {
     await sequelize.sync({ force: true });
