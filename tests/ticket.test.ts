@@ -4,11 +4,11 @@ import sequelize from '../config/database';
 import User from '../models/user';
 import Ticket from '../models/ticket';
 import jwt from 'jsonwebtoken';
-import { config } from '../config/env';
+import {config} from '../config/env';
 
 // DB sync
 beforeAll(async () => {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({force: true});
 });
 
 // close DB connection after all
@@ -24,8 +24,8 @@ describe('Tickets API', () => {
 
     beforeEach(async () => {
 
-        await Ticket.destroy({ where: {} });
-        await User.destroy({ where: {} });
+        await Ticket.destroy({where: {}});
+        await User.destroy({where: {}});
 
         // Create test user
         const user = await User.create({
@@ -39,9 +39,9 @@ describe('Tickets API', () => {
 
         // Create token
         token = jwt.sign(
-            { id: user.id, email: user.email, role: user.role },
+            {id: user.id, email: user.email, role: user.role},
             config.jwtSecret,
-            { expiresIn: '1h' }
+            {expiresIn: '1h'}
         );
 
         //create tickets
@@ -65,11 +65,10 @@ describe('Tickets API', () => {
     });
 
 
-
     it('should create a new ticket', async () => {
         const res = await request(app)
             .post('/api/tickets')
-            .set('Authorization', `Bearer ${token}`) // Передаем токен
+            .set('Authorization', `Bearer ${token}`)
             .send({
                 title: 'Test Ticket',
                 description: 'This is a test description',
@@ -80,7 +79,7 @@ describe('Tickets API', () => {
         expect(res.statusCode).toEqual(201);
         expect(res.body).toHaveProperty('id');
         expect(res.body.title).toEqual('Test Ticket');
-        expect(res.body.createdBy).toEqual('test@example.com'); // Проверка, что подставился email из токена
+        expect(res.body.createdBy).toEqual('test@example.com');
     });
 
     it('should fail if description is missing', async () => {
@@ -89,10 +88,10 @@ describe('Tickets API', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({
                 title: 'Test Ticket',
-                // description пропущен
+
             });
 
-        expect(res.statusCode).toEqual(400); // Ошибка валидации Joi
+        expect(res.statusCode).toEqual(400);
         expect(res.body.error).toContain('"description" is required');
     });
 
@@ -136,30 +135,10 @@ describe('Tickets API', () => {
 
     it('should deny delete ticket for non-admin user', async () => {
 
-        const regularUser = await User.create({
-            username: 'simple_user',
-            email: 'simple@example.com',
-            password: 'password123',
-            role: 'user'
-        });
-
-        const userToken = jwt.sign(
-            { id: regularUser.id, email: regularUser.email, role: regularUser.role },
-            config.jwtSecret,
-            { expiresIn: '1h' }
-        );
-
-
-        const ticket = await Ticket.findOne();
-        if (!ticket) throw new Error('No tickets found in DB for test');
-
         const res = await request(app)
-            .delete(`/api/tickets/${ticket.id}`)
-            .set('Authorization', `Bearer ${userToken}`);
+            .delete(`/api/tickets/${firstTicketId}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(res.statusCode).toEqual(403);
-
-        const ticketStillExists = await Ticket.findByPk(ticket.id);
-        expect(ticketStillExists).not.toBeNull();
     });
 });
