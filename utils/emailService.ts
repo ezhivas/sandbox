@@ -11,18 +11,22 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendVerificationEmail = async (to: string, token: string) => {
-    const link = `http://localhost:${config.port}/api/verify-email?token=${token}`;
+    const link = `${config.smtp.baseUrl}/api/verify-email?token=${token}`;
 
     try {
-        const info = await transporter.sendMail({
-            from: '"Ticket App" <noreply@ticketapp.com>',
+        // 👇 Зміна 1: Ми не присвоюємо результат у змінну info
+        await transporter.sendMail({
+            from: config.smtp.from,
             to,
             subject: 'Verify your email',
             html: `<p>Click <a href="${link}">here</a> to verify your email.</p>`,
         });
-        return info;
+
+        // 👇 Зміна 2: Явно повертаємо true
+        return true;
     } catch (error) {
         console.error('Email send failed:', error);
+        // 👇 Зміна 3: Явно повертаємо false (або null)
         return null;
     }
 };
