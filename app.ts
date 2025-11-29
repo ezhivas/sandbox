@@ -4,6 +4,7 @@ import userRoutes from './routes/userRoutes';
 import ticketRoutes from './routes/ticketRoutes';
 import loggerMiddleware from './middleware/loggerMiddleware';
 import swaggerSpec from './config/swagger';
+import path from 'path';
 
 const app = express();
 
@@ -14,9 +15,15 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api', userRoutes);
 app.use('/api', ticketRoutes);
 
+
+app.use(express.static(path.join(__dirname, '../public')));
+
 app.get('/', (req: Request, res: Response) => {
-    res.send('Server is up and running...');
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
+// app.get('/', (req: Request, res: Response) => {
+//     res.send('Server is up and running...');
+// });
 
 app.use((req: Request, res: Response) => {
     res.status(404).json({ error: 'Route not found' });
